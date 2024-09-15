@@ -1,4 +1,3 @@
-
 from rest_framework import generics
 from rest_framework.response import Response
 from django_filters import rest_framework as filters
@@ -26,5 +25,3 @@ class RetrieveDestroyUpdateAgentView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Agent.objects.all()
     serializer_class = AgentSerializer
     lookup_url_kwarg = 'id'
-
-

@@ -3,7 +3,7 @@ from rest_framework import generics
 from rest_framework.response import Response
 from django_filters import rest_framework as filters
 from app.models import Ticket
-from app.serializers import TicketSerializer 
+from app.serializers.ticket import TicketSerializer 
 
 # Handle Ticket views logic.
 class CreateTicketView(generics.CreateAPIView):

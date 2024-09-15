@@ -3,7 +3,7 @@ from rest_framework import generics
 from rest_framework.response import Response
 from django_filters import rest_framework as filters
 from app.models import Task
-from app.serializers import  TaskSerializer
+from app.serializers.task import  TaskSerializer
 # Handle Task views logic.
 class CreateTaskView(generics.CreateAPIView):
     queryset = Task.objects.all()
