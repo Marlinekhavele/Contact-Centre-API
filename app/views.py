@@ -1,17 +1,30 @@
 
-from rest_framework.viewsets import ModelViewSet
+from rest_framework import generics
+from rest_framework.response import Response
+from django_filters import rest_framework as filters
 from app.models import Agent, Task, Ticket
 from app.serializers import AgentSerializer, TaskSerializer, TicketSerializer 
 
 # Create your views here.
-class AgentViewSet(ModelViewSet):
+
+
+class CreateAgentView(generics.CreateAPIView):
     queryset = Agent.objects.all()
     serializer_class = AgentSerializer
 
-class TaskViewSet(ModelViewSet):
-    queryset = Task.objects.all()
-    serializer_class = TaskSerializer
+    def perform_create(self, serializer):
+        order = serializer.save()
+        detail_serializer = AgentSerializer(order)
+        return Response(detail_serializer.data)
 
-class TicketViewSet(ModelViewSet):
-    queryset = Ticket.objects.all()
-    serializer_class = TicketSerializer
+class ListAgentView(generics.ListAPIView):
+    queryset = Agent.objects.all()
+    serializer_class = AgentSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_fields = ('user__id', 'name')
+
+
+class RetrieveDestroyUpdateAgentView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Agent.objects.all()
+    serializer_class = AgentSerializer
+    lookup_url_kwarg = 'id'
