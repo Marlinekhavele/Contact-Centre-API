@@ -6,6 +6,7 @@ from app.models import Ticket
 from app.serializers.ticket import TicketSerializer 
 
 # Handle Ticket views logic.
+
 class CreateTicketView(generics.CreateAPIView):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from ..models import  Task
+from ..tasks import assign_task
 
 class TaskSerializer(serializers.ModelSerializer):
     """
@@ -12,5 +13,7 @@ class TaskSerializer(serializers.ModelSerializer):
 
         def create(self, validated_data):
             task = Task.objects.create(**validated_data)
+            assign_task.delay(str(task.id))  # Trigger asynchronous assignment
+
             task.save()
             return task
