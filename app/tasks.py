@@ -6,25 +6,32 @@ import redis
 
 redis_client = redis.StrictRedis(host='localhost', port=6379, db=0)
 
+# Define constants for task limits
+MAX_CALL_TASKS = 3
+MAX_OTHER_TASKS = 4
+
+HIGH_PRIORITY = 1
+NORMAL_PRIORITY = 0
+
 @shared_task
 def assign_task(task_id):
     with transaction.atomic():
         task = Task.objects.select_for_update().get(id=task_id)
         ticket = task.ticket
         
-        # Set priority based on platform (call has higher priority)
-        priority = 1 if ticket.platform == 'call' else 0
+        # call has higher priority
+        priority = HIGH_PRIORITY if ticket.platform.PLATFORM_CHOICES.CALL else NORMAL_PRIORITY
         
         available_agents = Agent.objects.filter(language_skills__contains=ticket.restriction)
 
         for agent in available_agents:
             assigned_tasks = agent.assigned_tasks
-            if ticket.platform == 'call':
-                if 'call' not in assigned_tasks and len(assigned_tasks) < 3:
+            if ticket.platform.PLATFORM_CHOICES.CALL:
+                if 'call' not in assigned_tasks and len(assigned_tasks) < MAX_CALL_TASKS:
                     assign_to_agent(task, agent)
                     return
             else:
-                if len(assigned_tasks) < 4:
+                if len(assigned_tasks) < MAX_OTHER_TASKS:
                     assign_to_agent(task, agent)
                     return
 
@@ -33,7 +40,8 @@ def assign_task(task_id):
 
 def assign_to_agent(task, agent):
     task.agent = agent
-    task.status = 'in_progress'
+    Task.STATUS_CHOICES.IN_PROGRESS
+
     task.save()
     agent.assigned_tasks.append(task.ticket.platform)
     agent.save()
@@ -55,7 +63,7 @@ def check_completed_tasks():
     in_progress_tasks = Task.objects.filter(status='in_progress', updated_at__lte=ten_minutes_ago)
     
     for task in in_progress_tasks:
-        task.status = 'done'
+        task.STATUS_CHOICES.DONE
         task.save()
         
         agent = task.agent

@@ -25,7 +25,6 @@ class Task(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     agent = models.ForeignKey('Agent', on_delete=models.CASCADE, null=True, blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='open')
-    log = models.JSONField(default=list)
 
     def __str__(self):
         return self.status
@@ -35,6 +34,7 @@ class Ticket(models.Model):
         ('facebook_chat', 'Facebook Chat'),
         ('email', 'Email'),
         ('call', 'Call'),
+        ('website_chat', 'Website Chat'),
     ]
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     restriction = models.JSONField(default=list)

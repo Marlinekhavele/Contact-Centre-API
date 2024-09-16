@@ -1,0 +1,67 @@
+Problem: Human agents are offering support to our customers and need to be able to answer their requests in different languages and through multiple channels.
+
+We need to reduce the average waiting time for customers by allowing customer care agents  to work in parallel on requests coming from multiple languages and different platforms.
+
+How we are going to design this system is by creating an Endpoint that handles these capabilities.
+
+We are going to have a cron job that handles the queues and filters if it is voice calls and text-based. Each task has a processing time of 10 minutes.
+
+Technology used:
+ -Python 
+- Django & Django Rest framework 
+- Redis message broker
+- Postgres - database
+- celery handles background tasks 
+How the Data models  would look like:
+
+Models
+
+Agent :
+Id 
+user
+Name
+Langauge_skillls
+assigned _tasks
+
+Task:
+id 
+Ticket
+Created_at
+Updated_at
+Agent
+Status  
+Log{“done”: timestamp”}
+Ticket:
+    - id 
+   - restriction
+   - platform
+
+API Endpoints:
+
+GET/my-tasks
+{
+  "task_id": "12345",
+  "status": "in_progress",
+  "created_at": "",
+  "updated_at": "",
+”agent_id”:””,
+“Ticket_id”:””,
+“Log”:””
+}
+
+
+POST /create-tickets
+{
+“I’d”: “12345”,
+“Restriction”:”German”,
+“Platform”:”Facebook”
+}
+
+
+
+PATH /update_task/id
+{
+“status”:DONE
+}
+
+

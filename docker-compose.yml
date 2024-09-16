@@ -1,0 +1,25 @@
+version: '3.11'
+
+services:
+  web:
+    build: ./
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./chat/:/app/
+    ports:
+      - 8000:8000
+    env_file:
+      - ./.env
+    depends_on:
+      - db
+  db:
+    image: postgres:12.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=ticket_assignment
+  
+volumes:
+  postgres_data:
