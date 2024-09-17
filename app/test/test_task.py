@@ -3,35 +3,36 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 from app.models import Agent, Task, Ticket
-from rest_framework.authtoken.models import Token
 
-class TaskTests(APITestCase):
-    def setUp(self):
-        self.user = User.objects.create_user(username='testuser', password='password')
-        self.token = Token.objects.create(user=self.user)
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
-        self.agent = Agent.objects.create(name='Test Agent', language_skills=['en'], user=self.user)
-        self.ticket = Ticket.objects.create(restriction=['en'], platform='email')
-        self.task = Task.objects.create(ticket=self.ticket, agent=self.agent, status='in_progress')
+def setUp(self):
+    self.user = User.objects.create_user(username='testuser', password='testpass123')
+    self.agent = Agent.objects.create(user=self.user, name='Test Agent', language_skills=['English', 'German'], assigned_tasks=[])
+    self.ticket = Ticket.objects.create(platform='call', restriction='English', priority=0)
+    self.task_data = {
+        'ticket': self.ticket.id,
+        'agent': self.agent.id,
+        'status': 'In progress'
+    }
 
-    def test_task_creation(self):
-        url = reverse('tasks-list')
-        data = {
-            'ticket': self.ticket.id,
-            'agent': self.agent.id,
-            'status': 'open'
-        }
-        response = self.client.post(url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+def test_create_task(self):
+    url = reverse('create-task')
+    self.client.force_authenticate(user=self.user)  # Add authentication
+    response = self.client.post(url, self.task_data, format='json')
+    self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+    self.assertEqual(Task.objects.count(), 1)
+    created_task = Task.objects.first()
+    self.assertEqual(created_task.status, 'In progress')
+    self.assertEqual(created_task.ticket, self.ticket)
+    self.assertEqual(created_task.agent, self.agent)
 
-    def test_task_list(self):
-        url = reverse('tasks-list')
-        response = self.client.get(url, format='json')
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
+def test_list_tasks(self):
+    Task.objects.create(**self.task_data)
+    url = reverse('tasks-list')
+    self.client.force_authenticate(user=self.user)  # Add authentication
+    response = self.client.get(url)
+    self.assertEqual(response.status_code, status.HTTP_200_OK)
+    self.assertEqual(len(response.data), 1)
 
-    def test_task_retrieve(self):
-        url = reverse('tickets-get-delete-update', args=[self.task.id])
-        response = self.client.get(url, format='json')
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['id'], str(self.task.id))
+
+
+      

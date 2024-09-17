@@ -13,7 +13,7 @@ class CreateAgentView(generics.CreateAPIView):
 
 
     def perform_create(self, serializer):
-        agent = serializer.save()
+        agent = serializer.save(user=self.request.user)
         return Response(AgentSerializer(agent).data, status=status.HTTP_201_CREATED)
 
 class ListAgentView(generics.ListAPIView):

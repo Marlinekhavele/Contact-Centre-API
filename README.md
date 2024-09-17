@@ -26,7 +26,7 @@ cd chat
 
 2. Create and activate a virtual environment:
 `python -m venv env`
-source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+`source venv/bin/activate`  # On Windows, use `venv\Scripts\activate`
 
 3. Install the required packages:
 `pip install -r requirements.txt`
@@ -93,5 +93,4 @@ Set `DEBUG = False` in settings.py
 - A Dockerfile is provided for containerized deployment.
 
 N/B
-
-- `.env` file is exposed on Github just to ease on environment variables sharing ideally this is not recommended and can cause a huge security risk lets just ignore it for now on this project.
+- when you think of seasonality the whole design changes 
