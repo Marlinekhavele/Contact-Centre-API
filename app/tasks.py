@@ -6,10 +6,8 @@ import redis
 
 redis_client = redis.StrictRedis(host='localhost', port=6379, db=0)
 
-# Define constants for task limits
 MAX_CALL_TASKS = 3
 MAX_OTHER_TASKS = 4
-
 HIGH_PRIORITY = 1
 NORMAL_PRIORITY = 0
 
@@ -19,14 +17,15 @@ def assign_task(task_id):
         task = Task.objects.select_for_update().get(id=task_id)
         ticket = task.ticket
         
-        # call has higher priority
-        priority = HIGH_PRIORITY if ticket.platform.PLATFORM_CHOICES.CALL else NORMAL_PRIORITY
+        priority = HIGH_PRIORITY if ticket.platform == 'call' else NORMAL_PRIORITY
+        ticket.priority = priority
+        ticket.save()
         
         available_agents = Agent.objects.filter(language_skills__contains=ticket.restriction)
 
         for agent in available_agents:
             assigned_tasks = agent.assigned_tasks
-            if ticket.platform.PLATFORM_CHOICES.CALL:
+            if ticket.platform == 'call':
                 if 'call' not in assigned_tasks and len(assigned_tasks) < MAX_CALL_TASKS:
                     assign_to_agent(task, agent)
                     return
@@ -35,13 +34,11 @@ def assign_task(task_id):
                     assign_to_agent(task, agent)
                     return
 
-        # If no agent is available, queue the task
         redis_client.zadd('task_queue', {str(task.id): priority})
 
 def assign_to_agent(task, agent):
     task.agent = agent
-    Task.STATUS_CHOICES.IN_PROGRESS
-
+    task.status = 'in_progress'
     task.save()
     agent.assigned_tasks.append(task.ticket.platform)
     agent.save()
@@ -49,7 +46,6 @@ def assign_to_agent(task, agent):
 @shared_task
 def process_task_queue():
     while True:
-        # Get the highest priority task from the queue
         task_id = redis_client.zpopmax('task_queue')
         if not task_id:
             break
@@ -63,7 +59,7 @@ def check_completed_tasks():
     in_progress_tasks = Task.objects.filter(status='in_progress', updated_at__lte=ten_minutes_ago)
     
     for task in in_progress_tasks:
-        task.STATUS_CHOICES.DONE
+        task.status = 'done'
         task.save()
         
         agent = task.agent

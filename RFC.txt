@@ -4,64 +4,75 @@ We need to reduce the average waiting time for customers by allowing customer ca
 
 How we are going to design this system is by creating an Endpoint that handles these capabilities.
 
-We are going to have a cron job that handles the queues and filters if it is voice calls and text-based. Each task has a processing time of 10 minutes.
+We are going to have a cron job that handles the queues and filters if it is voice calls which is higher priority and other text based. Each task has a processing time of 10 minutes.
+
+Human agent has a maximum capacity of:
+• 4 tasks assigned to them at the same time if the tasks are text-based.
+• 3 tasks, if they are already assigned a voice-based task (voice call).
+
+If an incoming task cannot be assigned at that moment it should be put to a queue and 
+assigned later when the human agent becomes available.This will happened when they have finished working on the ticket that is assigned to them by changing the ticket status to Done.
+
+we have to ensure Agents who are accessing the system are authenticated and here we are going to use: 
+- simplejwt token package from django 
+This package will help with token based authentication 
 
 Technology used:
- -Python 
-- Django & Django Rest framework 
-- Redis message broker
-- Postgres - database
-- celery handles background tasks 
-How the Data models  would look like:
+  -Python 
+  - Django & Django Rest framework 
+  - Redis message broker
+  - Postgres - database
+  - celery handles background tasks 
+  - redis
 
+How the Data models  would look like:
 Models
 
 Agent :
-Id 
-user
-Name
-Langauge_skillls
-assigned _tasks
+  - Id 
+  - user
+  - Name
+  - Langauge_skils
+  - assigned _tasks
 
 Task:
-id 
-Ticket
-Created_at
-Updated_at
-Agent
-Status  
-Log{“done”: timestamp”}
+  - id 
+  - Ticket
+  - Created_at
+  - Updated_at
+  - Agent
+  - Status  
 Ticket:
-    - id 
+   - id 
    - restriction
    - platform
 
 API Endpoints:
-
 GET/my-tasks
 {
   "task_id": "12345",
   "status": "in_progress",
   "created_at": "",
   "updated_at": "",
-”agent_id”:””,
-“Ticket_id”:””,
-“Log”:””
+  ”agent_id”:””,
+  “ticket_id”:””,
 }
 
 
 POST /create-tickets
 {
-“I’d”: “12345”,
-“Restriction”:”German”,
-“Platform”:”Facebook”
+   “I’d”: “12345”,
+   “Restriction”:”German”  "English",
+    “Platform”:”Facebook”,
+    "priority":0
 }
 
 
 
 PATH /update_task/id
 {
-“status”:DONE
+    “status”:DONE
 }
+
 
 

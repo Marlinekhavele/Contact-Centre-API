@@ -10,7 +10,7 @@ class AgentSerializer(serializers.ModelSerializer):
         fields = ['id','user','name','language_skills','assigned_tasks']
         read_only_fields = ['id']
 
-        def create(self, validated_data):
+    def create(self, validated_data):
             agent = Agent.objects.create(**validated_data)
             agent.save()
             return agent

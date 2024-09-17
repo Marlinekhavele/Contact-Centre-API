@@ -7,7 +7,7 @@ class Agent(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='agent_profile')
     name = models.CharField(max_length=100)
-    language_skills = models.JSONField() 
+    language_skills = models.JSONField(default=list) 
     assigned_tasks = models.JSONField(default=list)
 
     def __str__(self):
@@ -27,7 +27,8 @@ class Task(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='open')
 
     def __str__(self):
-        return self.status
+        return f"{self.ticket.platform} - {self.status}"
+
 
 class Ticket(models.Model):
     PLATFORM_CHOICES = [
@@ -39,5 +40,8 @@ class Ticket(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     restriction = models.JSONField(default=list)
     platform = models.CharField(max_length=20, choices=PLATFORM_CHOICES)
+    priority = models.IntegerField(default=0) 
+
     def __str__(self):
-        return self.restriction
+        return f"{self.platform} - {self.id}"
+    

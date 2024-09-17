@@ -4,6 +4,8 @@ from rest_framework.response import Response
 from django_filters import rest_framework as filters
 from app.models import Task
 from app.serializers.task import  TaskSerializer
+from ..tasks import assign_task
+
 
 # Handle Task views logic.
 class CreateTaskView(generics.CreateAPIView):
@@ -12,6 +14,7 @@ class CreateTaskView(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         task = serializer.save()
+        assign_task.delay(str(task.id))  # Trigger asynchronous assignment
         detail_serializer = TaskSerializer(task)
         return Response(detail_serializer.data)
 
