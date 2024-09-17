@@ -41,7 +41,7 @@ source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
 ` python manage.py runserver `
 
 7. In a separate terminal, start Celery:
-` celery -A contact_center worker -l info`
+` celery -A chat worker -l info`
 
 #### Usage
 The application provides the following API endpoints:
@@ -78,9 +78,9 @@ POST /api/tasks/
 ```
 The system will automatically attempt to assign the task to an available agent based on the defined rules and priorities.
 
-`MAX_CALL_TASKS`: Maximum number of simultaneous voice calls for an agent (default: 3)
-`MAX_OTHER_TASKS`: Maximum number of simultaneous text-based tasks for an agent (default: 4)
-`TASK_PRIORITY`: Priority levels for different task types
+- `MAX_CALL_TASKS`: Maximum number of simultaneous voice calls for an agent (default: 3)
+- `MAX_OTHER_TASKS`: Maximum number of simultaneous text-based tasks for an agent (default: 4)
+- `TASK_PRIORITY`: Priority levels for different task types
 
 #### Testing
 Run the test suite with:
