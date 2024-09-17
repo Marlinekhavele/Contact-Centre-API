@@ -53,7 +53,7 @@ The application provides the following API endpoints:
 You can interact with these endpoints using tools like cURL, Postman, or the built-in Django REST Framework browsable API.
 Example:List a task 
 ```bash
-GET /api/tasks/
+GET /api/v1/tasks/
 Content-Type: application/json
     {
         "id": "742b5a39-5622-4aa2-923e-99d8d4d1d4dd",
@@ -66,7 +66,7 @@ Content-Type: application/json
 ```
 Example: Create a task 
 ```bash
-POST /api/tasks/
+POST /api/v1/create-task/
 {
     "id": "b1373489-e638-4192-beb1-6bd33196d09d",
     "ticket": "f6fff39b-1036-4d82-8d88-c7f3ef420f25",
@@ -91,3 +91,7 @@ For production deployment:
 Set `DEBUG = False` in settings.py
 
 - A Dockerfile is provided for containerized deployment.
+
+N/B
+
+- `.env` file is exposed on Github just to ease on environment variables sharing ideally this is not recommended and can cause a huge security risk lets just ignore it for now on this project.
