@@ -68,7 +68,6 @@ POST /create-tickets
 }
 
 
-
 PATH /update_task/id
 {
     “status”:DONE

@@ -4,6 +4,7 @@ from .models import Task, Agent
 from django.db import transaction
 import redis
 
+
 redis_client = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 MAX_CALL_TASKS = 3

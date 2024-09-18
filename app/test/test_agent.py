@@ -6,6 +6,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from app.models import Agent
 
 class AgentTests(APITestCase):
+
     def setUp(self):
         self.user = User.objects.create_user(username='testuser', password='testpass123')
         refresh = RefreshToken.for_user(self.user)
