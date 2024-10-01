@@ -42,12 +42,14 @@ cd chat
 
 7. In a separate terminal, start Celery:
 ` celery -A chat worker -l info`
+8. In a separate termial ensure redis is running 
+` redis-cli ping`
 
 #### Usage
 The application provides the following API endpoints:
 ```bash
 - /api/tasks/: CRUD operations for tasks
-- /api/agents/: CRUD operations for agents
+- /api/agents/: CRUD operations for agents and they have to be authenticated
 - /api/tickets/: CRUD operations for tickets
 ```
 You can interact with these endpoints using tools like cURL, Postman, or the built-in Django REST Framework browsable API.
