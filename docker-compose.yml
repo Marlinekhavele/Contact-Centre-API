@@ -1,28 +1,27 @@
-version: '3.8'
-
+version: '3.3'
 services:
   web:
     build: .
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - .:/code
+      - .:/app
     ports:
       - "8000:8000"
     depends_on:
       - db
       - redis
     environment:
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
-      - REDIS_URL=redis://redis:6379/0
+      DATABASE_URL: postgres://postgres:postgres@db:5432/postgres
+      REDIS_URL: redis://redis:6379/0
 
   db:
     image: postgres:13
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
+      - ticket_assignment_db_data:/var/lib/postgresql/data/
     environment:
-      - POSTGRES_DB=ticket_assignment
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=password
+      POSTGRES_DB: ticket_assignment
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
 
   redis:
     image: "redis:alpine"
@@ -31,13 +30,14 @@ services:
     build: .
     command: celery -A chat worker -l info
     volumes:
-      - .:/code
+      - .:/app
     depends_on:
       - db
       - redis
     environment:
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
-      - REDIS_URL=redis://redis:6379/0
+      DATABASE_URL: postgres://postgres:postgres@db:5432/postgres
+      REDIS_URL: redis://redis:6379/0
 
 volumes:
-  postgres_data
+  ticket_assignment_db_data:
+    driver: local
