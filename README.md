@@ -20,10 +20,10 @@ This Django-based application manages task assignments for a multilingual contac
 
 ### Installation
 
-Clone the repository:
+- Clone the repository:
 `git clone https://github.com/Marlinekhavele/Contact-Centre-API `
 
-cd chat
+cd `chat`
 
 Set up PostgreSQL database:
 ```shell
@@ -54,45 +54,67 @@ Set up PostgreSQL database:
   # Exit the PostgreSQL shell
    - \q
 ```
-Create and activate a virtual environment:[install pyenv](https://ericsysmin.com/2024/02/05/how-to-install-pyenv-on-macos/)
+Create and activate a virtual environment: [install pyenv](https://ericsysmin.com/2024/02/05/how-to-install-pyenv-on-macos/)
 ```shell
 pyenv virtualenv venv
 pyenv activate venv
 ```
 
-4. Install dependencies:
+Install dependencies:
 ```shell
 pip install -r requirements.txt
 ```
 
-5. Set up the database:
+Set up the database:
 ```shell
 python manage.py makemigrations
 python manage.py migrate
 ```
 
-6. Create a superuser:
+Create a superuser:
 ```shell
 python manage.py createsuperuser
 ```
-Access the admin interface with the above command:
-`http://127.0.0.1:3000/admin/`
+Set up environment variables in a `.env` file:
+```shell
+SECRET_KEY=secretkey
+DEBUG=True
+ALLOWED_HOSTS=localhost,127.0.0.1
+DB_USER=postgres
+DB_HOST=localhost
+DB_NAME=ticket_assignment
+DB_PASSWORD=password
+REDIS_LOCATION=redis://127.0.0.1:6379/1
+CELERY_BROKER_URL=redis://localhost:6379/0
+CELERY_RESULT_BACKEND=redis://localhost:6379/0
 
-7. Start the development server:
-` python manage.py runserver `
+Source the env file: `source .env`
+```
+Access the admin interface with the above command:
+```shell
+http://127.0.0.1:3000/admin/
+```
+Start the development server:
+```shell
+python manage.py runserver 
+```
 
 In a separate terminal, start Celery:
-` celery -A chat worker -l info`
+```shell
+celery -A chat worker -l info
+```
 In a separate termial ensure redis is running 
-` redis-cli ping`
+```shell
+redis-cli ping
+```
 
 #### Usage
 The application provides the following API endpoints:
-```bash
-- /api/token/: gives the token that will be used on the Agent API
-- /api/v1/tasks/: CRUD operations for tasks
-- /api/v1/agents/: CRUD operations for agents and they have to be authenticated
-- /api/v1/tickets/: CRUD operations for tickets
+```shell
+/api/token/: gives the token that will be used on the Agent API
+/api/v1/tasks/: CRUD operations for tasks
+/api/v1/agents/: CRUD operations for agents and they have to be authenticated
+/api/v1/tickets/: CRUD operations for tickets
 ```
 You can interact with these endpoints using tools like cURL, Postman, or the built-in Django REST Framework browsable API.
 Example:List a task 
@@ -162,11 +184,15 @@ The system will automatically attempt to assign the task to an available agent b
 
 #### Testing
 Run the test suite with:
-`python manage.py test`
+```bash
+python manage.py test
+```
 
 #### Lint
 Run Lint:
-`make lint`
+```bash
+make lint
+```
 
 ### Deployment
 For production deployment:
@@ -175,11 +201,17 @@ Set `DEBUG = False` in settings.py
 ### DockerFile
 A Dockerfile is provided for containerized deployment of the application. The service can be easily started and stopped using make commands.
 Running the Service Locally:
-`make serve`
+```bash
+make serve
+```
 Stopping the Service:
-`make stop`
+```bash
+make stop
+```
 Restarting the Service:
-`make start`
+```bash
+make start
+```
 
 N/B
 - when you think of seasonality the whole design changes 
