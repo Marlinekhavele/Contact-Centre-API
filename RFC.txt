@@ -18,7 +18,7 @@ we have to ensure Agents who are accessing the system are authenticated and here
 This package will help with token based authentication 
 
 Technology used:
-  -Python 
+  - Python 
   - Django & Django Rest framework 
   - Redis message broker
   - Postgres - database

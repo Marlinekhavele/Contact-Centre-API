@@ -23,7 +23,7 @@ This Django-based application manages task assignments for a multilingual contac
 - Clone the repository:
 `git clone https://github.com/Marlinekhavele/Contact-Centre-API `
 
-cd `chat`
+- cd `chat`
 
 Set up PostgreSQL database:
 ```shell
