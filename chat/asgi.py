@@ -1,5 +1,3 @@
-
-
 """
 ASGI config for chat project.
 

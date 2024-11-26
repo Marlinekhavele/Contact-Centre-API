@@ -48,9 +48,10 @@ cd chat
 #### Usage
 The application provides the following API endpoints:
 ```bash
-- /api/tasks/: CRUD operations for tasks
-- /api/agents/: CRUD operations for agents and they have to be authenticated
-- /api/tickets/: CRUD operations for tickets
+- /api/token/: gives the token that will be used on the Agent API
+- /api/v1/tasks/: CRUD operations for tasks
+- /api/v1/agents/: CRUD operations for agents and they have to be authenticated
+- /api/v1/tickets/: CRUD operations for tickets
 ```
 You can interact with these endpoints using tools like cURL, Postman, or the built-in Django REST Framework browsable API.
 Example:List a task 
@@ -78,6 +79,40 @@ POST /api/v1/create-task/
     "status": "open"
 }
 ```
+Example: Create a ticket
+```bash
+POST /api/v1/create-ticket/
+{
+    "id": "51b6f80a-a172-4c1f-9a21-346ed97d492c",
+    "restriction": {},
+    "platform": "facebook_chat",
+    "priority": 2147483647
+}
+```
+Example: List ticket
+```bash
+GET /api/v1/tickets/
+[
+    {
+        "id": "e4df3854-8f66-44d0-8e26-2693c65ae105",
+        "restriction": [
+            "test",
+            "tick"
+        ],
+        "platform": "facebook_chat",
+        "priority": 0
+    }
+]
+```
+Example: Create a token
+```bash
+POST /api/token/
+{
+  "username": "flix",
+  "password": "12345"
+}
+
+```
 The system will automatically attempt to assign the task to an available agent based on the defined rules and priorities.
 
 - `MAX_CALL_TASKS`: Maximum number of simultaneous voice calls for an agent (default: 3)
@@ -93,6 +128,7 @@ For production deployment:
 Set `DEBUG = False` in settings.py
 
 - A Dockerfile is provided for containerized deployment.
+- To spin up the service locally you can run `make serve`  this will start the service locally and you should be able to see API documentaion on the swagger ui.
 
 N/B
 - when you think of seasonality the whole design changes 
