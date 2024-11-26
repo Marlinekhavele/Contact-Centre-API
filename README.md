@@ -20,29 +20,70 @@ This Django-based application manages task assignments for a multilingual contac
 
 ### Installation
 
-1. Clone the repository:
+Clone the repository:
 `git clone https://github.com/Marlinekhavele/Contact-Centre-API `
+
 cd chat
 
-2. Create and activate a virtual environment:
-`python -m venv env`
-`source venv/bin/activate`  # On Windows, use `venv\Scripts\activate`
+Set up PostgreSQL database:
+```shell
+  # Ubuntu
+   - sudo apt-get update
+   - sudo apt-get install postgresql postgresql-contrib
+   # macOS
+   - brew install postgresql
 
-3. Install the required packages:
-`pip install -r requirements.txt`
+  # Switch to the PostgreSQL user
+  - sudo -i -u postgres
+  # linux
+  - psql
 
-4. Set up the database:
-` python manage.py migrate`
+  # Open PostgreSQL shell Mac
+  -  brew services start postgres
+  -  psql postgres
 
-5. Create a superuser:
-` python manage.py createsuperuser`
+  # Create a new user 
+  - CREATE USER postgres WITH PASSWORD 'password';
 
-6. Start the development server:
+  # Create the database
+  - CREATE DATABASE ticket_assignment;
+
+  # Grant privileges to the user
+  - GRANT ALL PRIVILEGES ON DATABASE ticket_assignment TO postgres;
+
+  # Exit the PostgreSQL shell
+   - \q
+```
+Create and activate a virtual environment:[install pyenv](https://ericsysmin.com/2024/02/05/how-to-install-pyenv-on-macos/)
+```shell
+pyenv virtualenv venv
+pyenv activate venv
+```
+
+4. Install dependencies:
+```shell
+pip install -r requirements.txt
+```
+
+5. Set up the database:
+```shell
+python manage.py makemigrations
+python manage.py migrate
+```
+
+6. Create a superuser:
+```shell
+python manage.py createsuperuser
+```
+Access the admin interface with the above command:
+`http://127.0.0.1:3000/admin/`
+
+7. Start the development server:
 ` python manage.py runserver `
 
-7. In a separate terminal, start Celery:
+In a separate terminal, start Celery:
 ` celery -A chat worker -l info`
-8. In a separate termial ensure redis is running 
+In a separate termial ensure redis is running 
 ` redis-cli ping`
 
 #### Usage
@@ -123,12 +164,22 @@ The system will automatically attempt to assign the task to an available agent b
 Run the test suite with:
 `python manage.py test`
 
+#### Lint
+Run Lint:
+`make lint`
+
 ### Deployment
 For production deployment:
 Set `DEBUG = False` in settings.py
 
-- A Dockerfile is provided for containerized deployment.
-- To spin up the service locally you can run `make serve`  this will start the service locally and you should be able to see API documentaion on the swagger ui.
+### DockerFile
+A Dockerfile is provided for containerized deployment of the application. The service can be easily started and stopped using make commands.
+Running the Service Locally:
+`make serve`
+Stopping the Service:
+`make stop`
+Restarting the Service:
+`make start`
 
 N/B
 - when you think of seasonality the whole design changes 
